@@ -120,8 +120,8 @@ class Parser {
         this.lexer = lexer;
         this.markers = [];  // 栈，存放用于记录位置的位标
         this.lookahead = []; // 预读 token 列表
-        this.p = 0; // index of current token in lookahead buffer
-        sync(1);
+        this.index = 0; // index of current token in lookahead buffer
+        this.sync(1);
     }
 
     consume() {
@@ -132,7 +132,7 @@ class Parser {
             this.index = 0;
             this.lookahead = [];
         }
-        sync(1); // get another to replace consumed token
+        thi.sync(1); // get another to replace consumed token
     }
 
     isSpeculating() {
@@ -141,8 +141,8 @@ class Parser {
 
     /** Make sure we have i tokens from current position p (valid tokens from index p to p+i-1). */
     sync(n) {
-        if (this.p + n - 1 > this.lookahead.length - 1) { // 检验词法单元是否越界
-            let n = (p + n - 1) - (this.lookahead.length - 1);
+        if (this.index + n - 1 > this.lookahead.length - 1) { // 检验词法单元是否越界
+            let n = (this.index + n - 1) - (this.lookahead.length - 1);
             this.fill(n);
         }
     }
@@ -154,7 +154,7 @@ class Parser {
     }
 
     getToken(n) {
-        sync(n);
+        this.sync(n);
         return this.lookahead(this.index + n - 1);
     }
 
@@ -273,3 +273,6 @@ class BacktrackParser extends Parser {
         }
     }
 }
+
+exports.BacktrackParser = BacktrackParser;
+exports.BacktrackLexer = ListLexer;
