@@ -173,7 +173,7 @@ class Parser {
 
     /** Push current token index to stack */
     mark() {
-        this.markers.add(this.index);
+        this.markers.push(this.index);
         return this.index;
     }
 
@@ -182,8 +182,8 @@ class Parser {
      *  Rewinding the input is kind of undoing the `consume` */
     release() {
         let marker = this.markers[this.markers.length - 1];
-        this.markers.remove(this.markers.length - 1);
-        seek(marker);
+        this.markers = [];
+        this.seek(marker);
     }
 
     /** Rewind p to index */
@@ -198,19 +198,47 @@ class BacktrackParser extends Parser {
     }
 
     stat() {
-
+        if (this.speculate_stat_alt1()) {
+            this.list();
+            this.match(EOF_TYPE);
+        } else if (this.speculate_stat_alt2()) {
+            this.assign();
+            this.match(EOF_TYPE);
+        } else {
+            throw new Error("");
+        }
     }
 
     speculate_stat_alt1() {
-
+        let success = true;
+        this.mark(); // 标记当前位置以便放回输入
+        try {
+            this.list();
+            this.match(EOF_TYPE);
+        } catch (e) {
+            success = false;
+        }
+        this.release(); // 不管是否匹配，都要放回
+        return success;
     }
 
     speculate_stat_alt2() {
-
+        let success = true;
+        this.mark(); // 标记当前位置以便放回输入
+        try {
+            this.assign();
+            this.match(EOF_TYPE);
+        } catch (e) {
+            success = false;
+        }
+        this.release(); // 不管是否匹配，都要放回
+        return success;
     }
 
     assign() {
-
+        this.list();
+        this.match(EQUALS);
+        this.list();
     }
 
     list() {
