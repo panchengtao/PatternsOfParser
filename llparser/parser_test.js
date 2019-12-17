@@ -6,7 +6,6 @@ describe('test ListLexer', () => {
         let lexer = new ListLexer('[a, b = c]');
         let parser = new ListParser(lexer, 2);
 
-        parser.list()
         expect(() => {
             parser.list()
         }).toBeDefined()

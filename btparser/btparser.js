@@ -127,12 +127,12 @@ class Parser {
     consume() {
         this.index++;
         // have we hit end of buffer when not backtracking?
-        if (this.index === this.lookahead.length && !isSpeculating()) {
+        if (this.index === this.lookahead.length && !this.isSpeculating()) {
             // if so, it's an opportunity to start filling at index 0 again
             this.index = 0;
             this.lookahead = [];
         }
-        thi.sync(1); // get another to replace consumed token
+        this.sync(1); // get another to replace consumed token
     }
 
     isSpeculating() {
@@ -142,8 +142,8 @@ class Parser {
     /** Make sure we have i tokens from current position p (valid tokens from index p to p+i-1). */
     sync(n) {
         if (this.index + n - 1 > this.lookahead.length - 1) { // 检验词法单元是否越界
-            let n = (this.index + n - 1) - (this.lookahead.length - 1);
-            this.fill(n);
+            let i = (this.index + n - 1) - (this.lookahead.length - 1);
+            this.fill(i);
         }
     }
 
@@ -155,7 +155,7 @@ class Parser {
 
     getToken(n) {
         this.sync(n);
-        return this.lookahead(this.index + n - 1);
+        return this.lookahead[this.index + n - 1];
     }
 
     getTokenType(n) {
